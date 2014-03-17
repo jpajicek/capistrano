@@ -1,0 +1,39 @@
+
+1. Install Capistrano gem 
+
+  #sudo gem install capistrano
+
+
+
+2. Bootstrapping puppet
+
+- cap bootstrap - Setup puppet agent on the remote server (over ssh): 
+
+  ~/capistano/utils# cap bootstrap  
+
+
+3. Invoke puppet run on remote machine
+
+- cap puppet:run - Remote puppet run:
+
+  ~/capistano/utils# cap puppet:run
+
+
+4. Setup NRPE on a remote machine 
+
+- cap nrpe:setup - Install and configure NRPE with plugins
+
+  ~capistano/utils#cap nrpe:setup
+
+Make sure that nrpe config and plugins are up-to-date
+ 
+utils/nrpe/
+├── config
+│   └── nrpe.cfg
+├── plugins
+│   ├── check_iptables
+│   ├── check_tcp_connections.py
+│   ├── check_uptime
+│   └── check_varnish_stats
+└── scripts
+    └── install.sh
