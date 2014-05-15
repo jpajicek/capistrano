@@ -56,12 +56,15 @@ if ( (Get-PSSnapin -Name Microsoft.Exchange.Management.PowerShell.E2010 -ErrorAc
 $NagiosStatus = "0"
 $NagiosDescription = ""
 $NagiosPerfData = ""
+$QueueName = ""
 
 ForEach ($Queue in Get-Queue -Server $env:computername)
 {
 
-			# Look for lagged queues - critical if over 120
-				if ($Queue.MessageCount -gt "120" ) 
+			# Look for lagged queues - critical if over 250
+			if ($Queue.NextHopDomain -eq "c7385.sys5.archive.psmtp.com")
+			{
+				if ($Queue.MessageCount -gt "250" ) 
 				{
 					# Format the output for Nagios
 					if ($NagiosDescription -ne "") 
@@ -69,14 +72,16 @@ ForEach ($Queue in Get-Queue -Server $env:computername)
 						# we already have a message queue description, so we will add a separator
 						$NagiosDescription = $NagiosDescription + ", " 	
 					}
-					$NagiosDescription = $NagiosDescription + $Queue.Identity + " queue has " + $Queue.MessageCount + " messages to " + $Queue.NextHopDomain
+					
+					$QueueName = $Queue.Identity -replace "\\", "-"
+					$NagiosDescription = $NagiosDescription + $QueueName + " queue has " + $Queue.MessageCount + " messages to " + $Queue.NextHopDomain
 			
 					# Set the status to failed.
 					$NagiosStatus = "2"
 		
-				# Look for lagged queues - warning if over 80
+				# Look for lagged queues - warning if over 150
 				} 
-				elseif ($Queue.MessageCount -gt "80") 
+				elseif ($Queue.MessageCount -gt "170") 
 				{
 					# Format the output for Nagios
 					if ($NagiosDescription -ne "") 	
@@ -85,7 +90,44 @@ ForEach ($Queue in Get-Queue -Server $env:computername)
 						$NagiosDescription = $NagiosDescription + ", " 
 					}
 					
-					$NagiosDescription = $NagiosDescription + $Queue.Identity + " queue has " + $Queue.MessageCount + " messages to " + $Queue.NextHopDomain
+					$QueueName = $Queue.Identity -replace "\\", "-"
+					$NagiosDescription = $NagiosDescription + $QueueName + " queue has " + $Queue.MessageCount + " messages to " + $Queue.NextHopDomain
+			
+					# Don't lower the status level if we already have a critical event
+					if ($NagiosStatus -ne "2") 
+					{
+						$NagiosStatus = "1"
+					}
+				}
+			}
+			# Look for lagged queues - critical if over 40
+			elseif ($Queue.MessageCount -gt "40" ) 
+				{
+					# Format the output for Nagios
+					if ($NagiosDescription -ne "") 
+					{
+						# we already have a message queue description, so we will add a separator
+						$NagiosDescription = $NagiosDescription + ", " 	
+					}
+					
+					$QueueName = $Queue.Identity -replace "\\", "-"
+					$NagiosDescription = $NagiosDescription + $QueueName + " queue has " + $Queue.MessageCount + " messages to " + $Queue.NextHopDomain
+					# Set the status to failed.
+					$NagiosStatus = "2"
+		
+				# Look for lagged queues - warning if over 20
+				} 
+				elseif ($Queue.MessageCount -gt "20") 
+				{
+					# Format the output for Nagios
+					if ($NagiosDescription -ne "") 	
+					{
+						# we already have a message queue description, so we will add a separator
+						$NagiosDescription = $NagiosDescription + ", " 
+					}
+					
+					$QueueName = $Queue.Identity -replace "\\", "-"
+					$NagiosDescription =$NagiosDescription + $QueueName + " queue has " + $Queue.MessageCount + " messages to " + $Queue.NextHopDomain
 			
 					# Don't lower the status level if we already have a critical event
 					if ($NagiosStatus -ne "2") 
@@ -97,7 +139,7 @@ ForEach ($Queue in Get-Queue -Server $env:computername)
 
 
 # Output, what level should we tell our caller?
-$NagiosPerfData = "|queue=" + $Queue.MessageCount + ";80;120;0"
+$NagiosPerfData = "|queue=" + $Queue.MessageCount + ";20;40;0"
 $NagiosPerfData = $NagiosPerfData -replace " ", ""
 
 if ($NagiosStatus -eq "2") 

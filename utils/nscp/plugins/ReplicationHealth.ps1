@@ -1,4 +1,4 @@
-# Test Replication Health
+ # Test Replication Health
 # 
 # This script will execute the Test-ReplicationHealth command
 # and look for warnings for failed replication attemtps
@@ -39,7 +39,7 @@ $NagiosDescription = ""
 ForEach ($Type in Test-ReplicationHealth -Identity $env:computername) {
 
  	# Look for failed replications
-	if ($TypeResult -like "*FAILED*") {
+	if ($Type.Result -like "*FAILED*") {
 		# Format the output for Nagios
 		if ($NagiosDescription -ne "") {
 			$NagiosDescription = $NagiosDescription + ", "
@@ -49,8 +49,9 @@ ForEach ($Type in Test-ReplicationHealth -Identity $env:computername) {
 		
 		# Set the status to failed.
 		$NagiosStatus = "2"
-		
+	
 	# Look for warnings in replication
+
 	} elseif ($Type.Check -like "*Warn*") {
 		# Format the output for Nagios
 		if ($NagiosDescription -ne "") {

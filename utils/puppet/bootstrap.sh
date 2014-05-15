@@ -28,6 +28,7 @@ templatedir=$confdir/templates
 server=$PUPPETMASTER
 ca_server=$PUPPETMASTER
 certname=$HNAME.$DNAME
+configtimeout = 600
 pluginsync = true
 [agent]
 report = true " > /etc/puppet/puppet.conf
@@ -65,6 +66,7 @@ server = $PUPPETMASTER
 ca_server = $PUPPETMASTER
 certname = $HNAME.$DNAME
 pluginsync = true
+configtimeout = 600
 [agent]
 # The file in which puppetd stores a list of the classes
 # associated with the retrieved configuratiion.  Can be loaded in
