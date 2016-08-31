@@ -8,16 +8,28 @@ b. Install WINEXE
 
 1. Bootstrapping puppet
 
-TASK - cap bootstrap - Setup puppet agent on the remote server (over ssh): 
+TASK - cap puppet:bootstrap - Setup puppet agent on the remote server (over ssh): 
 
-  ~/capistano/utils# cap bootstrap  
+  ~/capistano/utils# cap puppet:bootstrap  
 
+  # Specify multiple hosts
+  ~/capistano/utils# cap puppet:bootstrap HOSTS=host1,hosts2
+
+  # Specify puppet enviroment (defaults to production)
+  ~/capistano/utils# cap puppet:bootstrap ENV=dev
+
+  # Specity puppetmaster (defaults to puppet.akqa.net)
+  ~/capistano/utils# cap puppet:bootstrap PUPPETMASTER=puppetmaster.domain
+
+  # Add domain names (defaults to emea.akqa.local)
+  ~/capistano/utils# cap puppet:bootstrap PUPPETMASTER=puppetmaster.domain DOMAIN=uat.akqa.local
 
 2. Invoke puppet run on remote machine
 
-TASK - cap puppet:run - Remote puppet run:
+TASK - cap puppet:agent - Remote puppet run:
 
-  ~/capistano/utils# cap puppet:run
+  ~/capistano/utils# cap puppet:agent
+  ~/capistano/utils# cap puppet:agent HOSTS=host1,hosts2
 
 
 3. Setup NRPE on remote UBUNTU machine 
@@ -33,7 +45,9 @@ TASK - cap nscp:setup - Install and configure NSclient++ with plugins
 
   ~capistano/utils#cap nscp:setup
 
+5. Maintenance page
 
+  ~capistano/utils#cap maintenance:start|stop WHITELIST=1.1.1.1
 
 
 capistano/utils/

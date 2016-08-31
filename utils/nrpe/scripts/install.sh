@@ -6,19 +6,22 @@
 
 CODENAME=$(lsb_release -c | cut -f2)
 DISTRO=$(head -1 /etc/issue | awk '{ print $1 }')
-ARCH=$(uname -m)
+ARCH=$(uname -i)
 
 # Debian distros
 if [ $DISTRO == "Ubuntu" ]; then
 apt-get update
 export DEBIAN_FRONTEND=noninteractive
 apt-get install -o Dpkg::Options::="--force-confold" --force-yes -q -y nagios-nrpe-server nagios-nrpe-plugin
+## Plugin dependecies
+apt-get install -o Dpkg::Options::="--force-confold" --force-yes -q -y sysstat ksh
 exit $?
 fi
 
 # CentOS distros
 if [ $DISTRO == "CentOS" ]; then
 
+cd  /tmp
 yum -y install wget
 
 function install_nrpe() {
